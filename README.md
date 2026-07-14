@@ -32,7 +32,7 @@ Game images can be organized in folders and subfolders instead of being limited 
 - **Filesystem:** FAT32 or exFAT
 - **Recommended filesystem:** exFAT, because FAT32 has a 4 GiB maximum file-size limit
 
-Copy your game images to the USB drive. They may be placed in the root directory or organized into folders such as:
+Copy your game images to the USB drive. They may be placed in the root directory or organized into folders.
 
 Select the USB card on the Modulo dashboard, choose the appropriate device, browse to a game, and launch it.
 
