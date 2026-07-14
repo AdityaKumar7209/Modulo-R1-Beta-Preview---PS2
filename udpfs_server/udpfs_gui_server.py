@@ -530,6 +530,11 @@ def run_gui():
                 self.log_queue.put(
                     "Note: the 'lz4' package is not installed, so .zso files "
                     "will appear but fail to open (pip install lz4)")
+            if enabled and not udpfs_server.LIBCHDR_AVAILABLE:
+                self.log_queue.put(
+                    "Note: libchdr was not found, so .chd files will appear "
+                    "but fail to open (on Windows, place chdr.dll next to "
+                    "the server files)")
 
         def toggle_server(self):
             if self.server is None:

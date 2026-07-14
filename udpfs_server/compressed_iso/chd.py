@@ -10,7 +10,9 @@ Build from source: https://github.com/rtissera/libchdr
 
 import ctypes
 import ctypes.util
+import os
 import struct
+import sys
 
 from .base import CompressedFileWrapper
 
@@ -21,10 +23,32 @@ from .base import CompressedFileWrapper
 
 def _load_libchdr():
     """Attempt to load libchdr. Returns loaded ctypes.CDLL or raises ImportError."""
-    name = ctypes.util.find_library("chdr")
-    candidates = ["libchdr.so.0", "libchdr.so"]
-    if name:
-        candidates.insert(0, name)
+    if sys.platform == 'win32':
+        names = ["chdr.dll", "libchdr.dll"]
+        hint = ("place chdr.dll next to the server (get a build from your "
+                "emulator's install, e.g. PCSX2, or "
+                "https://github.com/rtissera/libchdr)")
+    elif sys.platform == 'darwin':
+        names = ["libchdr.dylib", "libchdr.0.dylib"]
+        hint = "brew install libchdr, or build from https://github.com/rtissera/libchdr"
+    else:
+        names = ["libchdr.so.0", "libchdr.so"]
+        hint = ("apt install libchdr0, or build from "
+                "https://github.com/rtissera/libchdr")
+
+    candidates = []
+    found = ctypes.util.find_library("chdr")
+    if found:
+        candidates.append(found)
+    # Bare names use the system search path; the two directory forms let a
+    # DLL/so dropped next to the server or this package work out of the box.
+    package_dir = os.path.dirname(os.path.abspath(__file__))
+    server_dir = os.path.dirname(package_dir)
+    for name in names:
+        candidates.append(name)
+        candidates.append(os.path.join(server_dir, name))
+        candidates.append(os.path.join(package_dir, name))
+
     for candidate in candidates:
         try:
             lib = ctypes.cdll.LoadLibrary(candidate)
@@ -32,11 +56,7 @@ def _load_libchdr():
             return lib
         except OSError:
             continue
-    raise ImportError(
-        "libchdr not found. Install with:\n"
-        "  apt install libchdr0\n"
-        "or build from source: https://github.com/rtissera/libchdr"
-    )
+    raise ImportError("libchdr not found (.chd support disabled). " + hint)
 
 
 def _declare_api(lib):
