@@ -227,6 +227,12 @@ Oxanium-OFL.txt
 
 The names of the Neutrino project, its creator, and its contributors are used for attribution only and do not imply endorsement of Modulo.
 
+## Development Note
+
+Modulo R1 was built with the help of vibe coding and AI-assisted development tools.
+
+AI was used throughout development for coding, debugging, experimentation, and documentation. The project remains actively tested and refined by its author.
+
 ## Disclaimer
 
 Modulo is an independent homebrew project. It is not affiliated with, endorsed by, or sponsored by Sony Interactive Entertainment.
