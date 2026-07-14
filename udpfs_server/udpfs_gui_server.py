@@ -468,7 +468,8 @@ def run_gui():
 
             self.compression_var = tk.BooleanVar(value=settings.get('compression', False))
             tk.Checkbutton(btns, text="Serve .zso/.cso/.chd as .iso",
-                           variable=self.compression_var).pack(side=tk.RIGHT)
+                           variable=self.compression_var,
+                           command=self.on_compression_toggle).pack(side=tk.RIGHT)
 
             # Start/stop + status
             ctrl = tk.Frame(root)
@@ -512,6 +513,23 @@ def run_gui():
                 'folders': list(self.folder_list.get(0, tk.END)),
                 'compression': self.compression_var.get(),
             })
+
+        def on_compression_toggle(self):
+            enabled = self.compression_var.get()
+            self.persist()
+            # The server consults the flag per request, so a running instance
+            # picks the change up immediately - no restart required. The PS2
+            # side only needs a listing refresh (Square) to see the change.
+            if self.server is not None:
+                self.server.enable_compression = enabled
+                self.log_queue.put(
+                    "Compressed ISO serving %s (rescan the folder on the PS2 "
+                    "to refresh its listing)" %
+                    ("enabled" if enabled else "disabled"))
+            if enabled and not udpfs_server.LZ4_AVAILABLE:
+                self.log_queue.put(
+                    "Note: the 'lz4' package is not installed, so .zso files "
+                    "will appear but fail to open (pip install lz4)")
 
         def toggle_server(self):
             if self.server is None:

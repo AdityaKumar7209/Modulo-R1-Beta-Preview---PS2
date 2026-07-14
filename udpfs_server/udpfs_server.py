@@ -1092,7 +1092,7 @@ class UdpfsServer:
             
             if self.enable_compression:
                 lower_name = entry.name.lower()
-                if lower_name.endswith('.zso') or lower_name.endswith('.cso'):
+                if lower_name.endswith(('.zso', '.cso', '.chd')):
                     # Transform name to .iso
                     display_name = self._transform_compressed_name(entry.name)
                     # Get uncompressed size
@@ -1143,7 +1143,7 @@ class UdpfsServer:
             if self.enable_compression and path.lower().endswith('.iso'):
                 # Try to find compressed version
                 base_path = path[:-4]  # Remove .iso
-                for ext in ['.zso', '.cso']:
+                for ext in ['.zso', '.cso', '.chd']:
                     compressed_path = base_path + ext
                     compressed_resolved = self._resolve_path(compressed_path)
                     if compressed_resolved and os.path.exists(compressed_resolved):
@@ -1167,7 +1167,7 @@ class UdpfsServer:
             # Check if this is a compressed file
             if self.enable_compression:
                 lower_path = resolved.lower()
-                if lower_path.endswith('.zso') or lower_path.endswith('.cso'):
+                if lower_path.endswith(('.zso', '.cso', '.chd')):
                     compressed_stat = self._get_compressed_stat(resolved, st)
                     if compressed_stat:
                         stat_info = compressed_stat
