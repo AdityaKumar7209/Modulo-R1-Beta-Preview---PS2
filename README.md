@@ -12,10 +12,11 @@ The modified Python UDPFS server source is included in this repository. The Modu
 ```text
 /
 ├── README.md
-├── neutrino.elf
-├── Neutrino-AFL-3.0.txt
+├── modulo.elf
+├── Neutrino-AFL-3.0
 ├── Oxanium-OFL.txt
 └── udpfs_server/
+    ├── Win-UDPFS-Server.exe
     ├── udpfs_gui_server.py
     ├── udpfs_server.py
     └── compressed_iso/
@@ -40,14 +41,14 @@ Select the USB card on the Modulo dashboard, choose the appropriate device, brow
 ### MX4SIO SD Adapters
 
 > [!NOTE]
-> MX4SIO is currently not supported, even though an MX4SIO option appear in the menu.
+> MX4SIO is currently not supported, even though an MX4SIO option appears in the menu.
 
 
 ### MMCE Memory Card Emulators
 
 - **Filesystem:** An SD card configured for PS2 game-loading mode by the MMCE device
-- **Firmware:**sd2psXtd Firmware Version 1.4.0 or newer
-https://sd2psxtd.github.io/
+- **Firmware:** sd2psXtd firmware version 1.4.0 or newer
+- **Project website:** <https://sd2psxtd.github.io/>
 
 Copy your game images to the MMCE SD card, insert the device into a PS2 memory card slot, and select the corresponding MMCE device in Modulo.
 
@@ -64,26 +65,38 @@ The internal PS2 HDD can be formatted with a standard exFAT partition on a compu
 
 ### Network Streaming (UDPFS)
 
-- **Server applications:** [`udpfs_gui_server.py`](udpfs_server/udpfs_gui_server.py) and [`udpfs_server.py`](udpfs_server/udpfs_server.py)
+- **Windows executable:** [`Win-UDPFS-Server.exe`](udpfs_server/Win-UDPFS-Server.exe)
+- **Python applications:** [`udpfs_gui_server.py`](udpfs_server/udpfs_gui_server.py) and [`udpfs_server.py`](udpfs_server/udpfs_server.py)
 - **Protocol:** UDPFS
 - **Port:** UDP `62966` (`0xF5F6`)
 - **Supported formats:** ISO, CHD, CSO, and ZSO, subject to the dependencies described below
 
-Run the Python UDPFS server on a computer, select the folders containing your game images, and start the server.
+Windows users can run the prebuilt executable. macOS, Linux, and users who prefer the source version can run the Python application.
 
-On the PS2, select **Browse network games**. Modulo will scan the local network, list available servers, and allow you to browse and stream supported game images.
+Select the folders containing your game images and start the server. On the PS2, select **Browse network games**. Modulo will scan the local network, list available servers, and allow you to browse and stream supported game images.
 
 ## UDPFS Game Server
 
-The included cross-platform Python application serves PlayStation 2 game images to **Modulo or Neutrino** over a local network using UDPFS.
+The UDPFS server is provided as a prebuilt Windows application and as cross-platform Python source. It serves PlayStation 2 game images to **Modulo or Neutrino** over a local network.
 
 ### Requirements
 
-- Python 3
+#### Windows Executable
+
+- Windows
 - A local network connection between the computer and PS2
 - DHCP enabled, unless static IP addresses are configured manually
 - Inbound UDP traffic permitted on port **62966** (`0xF5F6`)
+
+The Windows executable lets you run the graphical UDPFS server without starting the Python script manually.
+
+#### Python Version
+
+- Python 3
 - Tkinter for the graphical interface
+- A local network connection between the computer and PS2
+- DHCP enabled, unless static IP addresses are configured manually
+- Inbound UDP traffic permitted on port **62966** (`0xF5F6`)
 
 Tkinter is commonly included with Python. On Debian or Ubuntu, it can be installed with:
 
@@ -91,7 +104,21 @@ Tkinter is commonly included with Python. On Debian or Ubuntu, it can be install
 sudo apt install python3-tk
 ```
 
-## Quick Start — Graphical Interface
+## Quick Start — Windows Executable
+
+1. Download the repository as a ZIP and extract it.
+2. Open the `udpfs_server` folder.
+3. Run [`Win-UDPFS-Server.exe`](udpfs_server/Win-UDPFS-Server.exe).
+4. If Windows Firewall asks for permission, allow the application on **private networks**.
+5. Select **Add Folder...** and choose one or more folders containing your game images.
+6. Enable **Serve .zso/.cso/.chd as .iso** when compressed-image support is required.
+7. Select **Start Server**.
+8. Start Modulo Beta Preview on the PS2 and select **Browse network games**.
+
+> [!IMPORTANT]
+> The PC and PS2 must be connected to the same local network. UDP port **62966** must be allowed through the PC firewall, or Modulo may not discover the server.
+
+## Quick Start — Python Version
 
 1. Download and extract the beta preview.
 2. Open a terminal in the `udpfs_server` folder.
@@ -113,7 +140,7 @@ python3 udpfs_gui_server.py
 5. Enable **Serve .zso/.cso/.chd as .iso** when compressed-image support is required.
 6. Select **Start Server**.
 7. Allow Python through the firewall when prompted.
-8. Start Modulo Beta Preview on the PS2 and connect to the UDPFS server.
+8. Start Modulo Beta Preview on the PS2 and select **Browse network games**.
 
 ## Supported Image Formats
 
@@ -121,8 +148,8 @@ python3 udpfs_gui_server.py
 | --- | --- | --- |
 | ISO | Built in | None |
 | CSO | Optional compression mode | None; uses Python's built-in `zlib` |
-| ZSO | Optional compression mode | Python `lz4` package |
-| CHD v5 | Optional compression mode | `libchdr` shared library |
+| ZSO | Optional compression mode | Python version requires the `lz4` package |
+| CHD v5 | Optional compression mode | Python version requires the `libchdr` shared library |
 
 ### ZSO Support
 
@@ -158,7 +185,7 @@ For reliable operation:
 - Connect the PS2 and computer to the same local network.
 - Use wired Ethernet wherever possible.
 - Avoid using Wi-Fi for the server computer when consistent transfer performance is required.
-- Permit inbound UDP traffic for Python on private networks.
+- Permit inbound UDP traffic for `Win-UDPFS-Server.exe` or Python on private networks.
 - Ensure UDP port `62966` is not blocked by the operating-system firewall, router isolation, VPN, or security software.
 - Avoid running multiple UDPFS servers on the same address and port.
 
@@ -168,7 +195,7 @@ For reliable operation:
 
 - Confirm that the application reports the server status as **Running**.
 - Confirm that the PS2 and computer are connected to the same local network.
-- Allow inbound UDP traffic on port `62966` through the computer's firewall.
+- Allow `Win-UDPFS-Server.exe` or Python to receive inbound UDP traffic on port `62966` through the computer's firewall.
 - Temporarily disable any VPN or virtual network adapter that may be changing network routing.
 - Restart the UDPFS server after changing network settings.
 - Restart Modulo after confirming that the server is running.
@@ -215,7 +242,7 @@ Modulo includes modified software derived from Neutrino.
 Neutrino is licensed under the **Academic Free License version 3.0 (AFL-3.0)**. A copy of the license is included in:
 
 ```text
-Neutrino-AFL-3.0.txt
+Neutrino-AFL-3.0
 ```
 
 The original Neutrino copyright, attribution, and licensing notices remain applicable to the Neutrino-derived components.
@@ -230,7 +257,7 @@ The names of the Neutrino project, its creator, and its contributors are used fo
 
 ## Development Note
 
-Modulo R1 was built with the help of vibe coding and AI-assisted development tools.
+Modulo was built with the help of vibe coding and AI-assisted development tools.
 
 AI was used throughout development for coding, debugging, experimentation, and documentation. The project remains actively tested and refined by its author.
 
