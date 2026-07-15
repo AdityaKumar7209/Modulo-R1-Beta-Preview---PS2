@@ -47,6 +47,7 @@ Select the USB card on the Modulo dashboard, choose the appropriate device, brow
 
 - **Filesystem:** An SD card configured for PS2 game-loading mode by the MMCE device
 - **Firmware:** Version 1.4.0 or newer
+https://sd2psxtd.github.io/
 
 Copy your game images to the MMCE SD card, insert the device into a PS2 memory card slot, and select the corresponding MMCE device in Modulo.
 
